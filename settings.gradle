@@ -1,0 +1,14 @@
+rootProject.name = 'api'
+
+include(
+	'server:configServer',
+	'server:eurekaServer',
+	'server:gatewayServer',
+	'server:secretServer',
+	'service:accountService',
+	'service:microService',
+	'service:soccerService',
+	'service:userService'
+)
+
+project(':service:soccerService').projectDir = file('service/soccer-service')

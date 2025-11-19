@@ -1,0 +1,150 @@
+services:
+  config-server:
+    container_name: config-server
+    build:
+      context: .
+      dockerfile: ./server/configServer/Dockerfile
+    image: local/config-server:latest
+    env_file:
+      - .env
+    environment:
+      - SPRING_APPLICATION_JSON={"eureka":{"client":{"serviceUrl":{"defaultZone":"http://eureka-server:8761/eureka/"}}}}
+    ports:
+      - "8888:8888"
+    networks:
+      - spring-network
+
+  eureka-server:
+    container_name: eureka-server
+    build:
+      context: .
+      dockerfile: ./server/eurekaServer/Dockerfile
+    image: local/eureka-server:latest
+    depends_on:
+      - config-server
+    environment:
+      - SPRING_APPLICATION_JSON={"eureka":{"client":{"serviceUrl":{"defaultZone":"http://eureka-server:8761/eureka/"}}}}
+    ports:
+      - "8761:8761"
+    networks:
+      - spring-network
+
+  gateway-server:
+    container_name: gateway-server
+    build:
+      context: .
+      dockerfile: ./server/gatewayServer/Dockerfile
+    image: local/gateway-server:latest
+    depends_on:
+      - config-server
+      - eureka-server
+    environment:
+      - SPRING_APPLICATION_JSON={"eureka":{"client":{"serviceUrl":{"defaultZone":"http://eureka-server:8761/eureka/"}}}}
+    ports:
+      - "8080:8080"
+    networks:
+      - spring-network
+
+  account-service:
+    container_name: account-service
+    build:
+      context: .
+      dockerfile: ./service/accountService/Dockerfile
+    image: local/account-service:latest
+    depends_on:
+      - config-server
+      - eureka-server
+    environment:
+      - SPRING_APPLICATION_JSON={"eureka":{"client":{"serviceUrl":{"defaultZone":"http://eureka-server:8761/eureka/"}}}}
+    ports:
+      - "8081:8080"
+    networks:
+      - spring-network
+
+  micro-service:
+    container_name: micro-service
+    build:
+      context: .
+      dockerfile: ./service/microService/Dockerfile
+    image: local/micro-service:latest
+    depends_on:
+      - config-server
+      - eureka-server
+    environment:
+      - SPRING_APPLICATION_JSON={"eureka":{"client":{"serviceUrl":{"defaultZone":"http://eureka-server:8761/eureka/"}}}}
+    ports:
+      - "8082:8080"
+    networks:
+      - spring-network
+
+  soccer-service:
+    container_name: soccer-service
+    build:
+      context: .
+      dockerfile: ./service/soccer-service/Dockerfile
+    image: local/soccer-service:latest
+    depends_on:
+      - config-server
+      - eureka-server
+    environment:
+      - SPRING_APPLICATION_JSON={"eureka":{"client":{"serviceUrl":{"defaultZone":"http://eureka-server:8761/eureka/"}}}}
+    ports:
+      - "8083:8080"
+    networks:
+      - spring-network
+
+  user-service:
+    container_name: user-service
+    build:
+      context: .
+      dockerfile: ./service/userService/Dockerfile
+    image: local/user-service:latest
+    depends_on:
+      - config-server
+      - eureka-server
+    environment:
+      - SPRING_APPLICATION_JSON={"eureka":{"client":{"serviceUrl":{"defaultZone":"http://eureka-server:8761/eureka/"}}}}
+    ports:
+      - "8084:8080"
+    networks:
+      - spring-network
+
+  ui-server:
+    container_name: ui-server
+    build:
+      context: .
+      dockerfile: ./frontend/Dockerfile
+    image: local/ui-server:latest
+    depends_on:
+      - gateway-server
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - BACKEND_BASE_URL=http://gateway-server:8080
+    restart: unless-stopped
+    networks:
+      - spring-network
+
+  postgres:
+    container_name: postgres
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=aiion
+      - POSTGRES_PASSWORD=aiion4man
+      - POSTGRES_DB=aidb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - spring-network
+
+networks:
+  spring-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+

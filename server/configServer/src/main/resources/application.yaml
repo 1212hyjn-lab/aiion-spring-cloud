@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: config-server
+  cloud:
+    compatibility-verifier:
+      enabled: false
+    config:
+      server:
+        encrypt:
+          enabled: false
+        git:
+          uri: git@github.com:1212hyjn-lab/aiion-secrets.git
+          default-label: main
+          ignoreLocalSshSettings: true
+          strictHostKeyChecking: false
+          hostKey:
+          hostKeyAlgorithm:
+          privateKey: ${CONFIG_SERVER_PRIVATE_KEY}
+
+server:
+  port: 8888
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      show_details: always
+encrypt:
+  key: my-secret
+

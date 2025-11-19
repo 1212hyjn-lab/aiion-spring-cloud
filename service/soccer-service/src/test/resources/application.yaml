@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/aidb
+    username: aiion
+    password: aiion4man
+    driver-class-name: org.postgresql.Driver
+  cloud:
+    compatibility-verifier:
+      enabled: false
+    config:
+      enabled: false
+
+eureka:
+  client:
+    enabled: false
+

@@ -1,0 +1,22 @@
+package site.aiion.api.common.domain;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Messenger {
+    private int code;
+    private String message;
+    private Object data;
+    
+    public Messenger(int code, String message) {
+        this.code = code;
+        this.message = message;
+    }
+}
+

@@ -1,0 +1,10 @@
+spring:
+  cloud:
+    compatibility-verifier:
+      enabled: false
+    config:
+      server:
+        git:
+          uri: file:///tmp/config-repo
+          privateKey: test-private-key
+
